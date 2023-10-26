@@ -11,6 +11,7 @@ app.use(errorHandler);
 connectionDB();
 app.use("/user",require('./routes/UserRoutes'));
 app.use("/product",require('./routes/productsRoutes'));
+app.use("/usertype",require('./routes/UserTypeRoutes'));
 
 const port = process.env.PORT;
 app.listen(port,()=>{

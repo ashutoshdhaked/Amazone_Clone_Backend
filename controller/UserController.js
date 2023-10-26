@@ -124,7 +124,21 @@ const getUser = ( asyncHandler(async (req,res)=>{
          if(!match){
             return res.status(404).json({ message: 'Incorrect Password !!' });
          }
-        res.status(200).json(user);
+         
+         let secretkey = "";
+         if(user.usertype==="shopkeeper"){
+             secretkey  = process.env.SECREATE_KEY_SHOPKEEPER;
+          }
+         else if(user.usertype==="normaluser"){
+             secretkey  =  process.env.SECREATE_KEY_NORMALUSER;
+         }
+          const payload = {
+             id : user._id,
+             email : user.email,
+             usertype :user.usertype
+          }
+         const token = jwt.sign(payload,secretkey);
+         res.status(200).json({ token: `Bearer ${token}` });
     } catch (error) {
          console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
