@@ -1,23 +1,18 @@
- const jwt = require('jsonwebtoken');
-
 const asyncHandler = require('express-async-handler');
+const UserTypeController = (asyncHandler(async(req,res)=>{
+  try{
+     const usertype = req.type;
+     if(usertype){
+           return res.status(200).json({usertype:usertype});
+     }
+     else{
+       return res.status(404).json({message :"Invalid User : user not having any access "});
+     }
+    }
+    catch(error){
+      return res.status(500).json({message :"Internal Server Error"});
+    }
 
-
-const shopKeeperController = (asyncHandler((req,res)=>{
-    if (req.user && req.user.usertype === 'shopkeeper') {
-        res.status(200).json({ message: 'Access granted for shopkeepers.' });
-      } else {
-        res.status(404).json({ message: 'Shopkeeper access denied.' });
-      }
 }));
 
-const normalUserController = (asyncHandler((req,res)=>{
-      const check = jwt.verify()
-    if (req.usertype === 'normaluser') {
-        res.status(200).json({ message: 'Access granted for normaluser.' });
-      } else {
-        res.status(404).json({ message: 'NormalUser  access denied.' });
-      }
-}));
-
-module.exports = {shopKeeperController,normalUserController};
+module.exports = {UserTypeController};

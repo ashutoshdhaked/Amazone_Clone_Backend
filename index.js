@@ -4,14 +4,23 @@ const env = require('dotenv').config();
 const connectionDB = require('./config/dbConnection');
 const errorHandler = require('./middleware/errorHandler');
 const app = express();
-app.use(express.json());
+
 app.use(cors());
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
+
+  
+app.use(express.json());
 app.use(errorHandler);
 
 connectionDB();
 app.use("/user",require('./routes/UserRoutes'));
 app.use("/product",require('./routes/productsRoutes'));
-app.use("/usertype",require('./routes/UserTypeRoutes'));
+app.use("/userportal",require('./routes/UserTypeRoutes'));
 
 const port = process.env.PORT;
 app.listen(port,()=>{

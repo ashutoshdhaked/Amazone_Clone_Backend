@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+const env = require('dotenv').config();
 
 const connectionDB = async ()=>{
+    const db_url = process.env.DATABASE_CONNECTION_URL;
     try{
-   await mongoose.connect('mongodb://localhost:27017/Amazonedb', {
+   await mongoose.connect(db_url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
      });

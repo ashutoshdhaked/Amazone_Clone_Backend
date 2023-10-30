@@ -5,10 +5,6 @@ const productSchema = mongoose.Schema({
             type:String,
             require :[true,"Plese enter your url "]
          },
-        detailUrl:{
-            type:String,
-            require :[true,"Plese enter your detail "]
-         },
         shorttitle:{
             type:String,
             require :[true,"Plese enter your shorttitle "]
@@ -51,4 +47,4 @@ const productSchema = mongoose.Schema({
 
 );
 
-module.exports = mongoose.model("products",productSchema);
+module.exports = mongoose.model("Products",productSchema);

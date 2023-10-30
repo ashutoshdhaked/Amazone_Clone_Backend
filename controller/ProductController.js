@@ -5,32 +5,31 @@ const asyncHandler = require('express-async-handler');
 // @route /product/getproducts
 // @access public 
 const getAllProducts = (asyncHandler( async(req,res)=>{
-    const product = await ProductModel.find({}).then(  
-        (result)=>{
-            if (result.length > 0) {
-                return res.status(200).json(result); 
-            } 
-            else {
-                return res.status(404).json({
-                    error: "User not found", 
-                });   
-        } 
+    try {
+        const products = await ProductModel.find({});
+        if (products.length > 0) {
+            return res.status(200).json(products);
+        } else {
+            return res.status(404).json({
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal Server Error',});
     }
-     ).catch((err)=>{
-       return res.status(500).json({
-            error :'Internal Server Error '
-        })
-     })
-
 }));
 
 // @desc Saving the product item
 // @route /product/saveproducts
 // @access public
 const saveProducts = (asyncHandler( async(req,res)=>{
+    const usertype =  req.type; 
+    if(usertype!=='shopkeeper'){
+        return res.status(500).json({
+            error :'Not A Valid User '
+        })
+       }
     const productdata ={
         url: req.body.url,
-        detailUrl: req.body.detailUrl,
         shorttitle: req.body.shorttitle,
         longtitle: req.body.longtitle,
         mrp: req.body.mrp, 
@@ -38,8 +37,10 @@ const saveProducts = (asyncHandler( async(req,res)=>{
         discount: req.body.discount,
         description: req.body.description,
         detail: req.body.detail,
-        tagline: req.body.tagline
+        category: req.body.category
     }
+    
+    productdata.cost = ( productdata.mrp -  (productdata.mrp* productdata.discount)/100);
     const product = await new  ProductModel(productdata);
     const response = await product.save();
    if(response){
@@ -52,10 +53,16 @@ const saveProducts = (asyncHandler( async(req,res)=>{
 }));
 
 // @desc Fetching product according to id
-// @route /product/getproducts/:userid
+// @route /product/getproducts/:token
 // @access private
 const getUserProducts = (asyncHandler( async(req,res)=>{
-   const id = req.params.userid;
+    const usertype =  req.type; 
+   const id = req.id;
+   if(usertype!=='shopkeeper'){
+    return res.status(500).json({
+        error :'Not A Valid User '
+    })
+   }
    const product = await ProductModel.find({userid : id}).then(  
     (result)=>{
         if (result.length > 0) {
@@ -75,10 +82,10 @@ const getUserProducts = (asyncHandler( async(req,res)=>{
 
 }));
 // @desc deleting the product
-// @route /product/deleteproducts/id
+// @route /product/deleteproducts/token
 // @access private
 const deleteProducts = (asyncHandler( async(req,res)=>{
-    const id = req.params.id;
+    const id = req.id;
     try{
     const deleteditem = await ProductModel.deleteOne({_id:id});
       if(!deleteditem){
@@ -92,10 +99,10 @@ const deleteProducts = (asyncHandler( async(req,res)=>{
 }));
 
 // @desc  updating products
-// @route /product/updateproducts/:id
+// @route /product/updateproducts/:token
 // @access private
 const updataProducts = (asyncHandler( async(req,res)=>{
-    const id = req.params.id;
+    const id = req.id;
     const productdata = {
         url: req.body.url,
         detailUrl: req.body.detailUrl,

@@ -9,6 +9,7 @@ const userValidation = require('../Validation/UserValidation');
 
 
 
+
 async function hashPassword(plaintextPassword) {
     const hash = await bcrypt.hash(plaintextPassword, 10);
     return hash;
@@ -50,12 +51,11 @@ const saveUser = ( asyncHandler(async (req,res)=>{
                email : userdata.email
             }
             const token = jwt.sign(payload,usersecreatekey,{expiresIn:'1h'})
-            const text = `"<p>You have successfully registered, and your password is <h3> ${temppassword}.</h3> To change your password, please <a href="http://192.168.1.21:3000/ResetPassword?token=${token}"> click here</a>.</p>"`;
+            const text = `"<p>You have successfully registered, and your password is <h3> ${temppassword}.</h3> To change your password, please <a href="http://localhost:3000/ResetPassword?token=${token}"> click here</a>.</p>"`;
        
             const condition =  await SendEmail(userdata.email,text);
-            
             if (condition !== true) {
-                console.log( "email is not be send error !!!");
+                // console.log( "email is not be send error !!!");
                 return res.status(400).json({ error : "user email is not a valid email"});
              } 
             const user = await new UserModel(userdata);
@@ -82,15 +82,18 @@ const saveUser = ( asyncHandler(async (req,res)=>{
 
 
 //@desc Update the user password
-//@routes  /user/:token
+//@routes  /user/updatepassword
 //@access public
 const updatePassword = ( asyncHandler(async (req,res)=>{
     const token = req.body.token.trim();
     const key = process.env.SECERATE_KEY.trim(); 
     const password = req.body.password;
+    
+    console.log("token:"+token+"and key:"+key);
+
     try{
         const payload = await jwt.verify(token,key);
-        const email = payload.email;   
+        const email = payload.email;       
         const user= await UserModel.findOne({email :email});
         user.password = await hashPassword(password);
         const response =  new UserModel(user);
@@ -110,7 +113,7 @@ const updatePassword = ( asyncHandler(async (req,res)=>{
 
 
 //@desc  getting login user data 
-//@routes  /user/:token
+//@routes  /user/loginuser
 //@access public
 const getUser = ( asyncHandler(async (req,res)=>{
      const {email ,password}= req.body;
@@ -124,21 +127,20 @@ const getUser = ( asyncHandler(async (req,res)=>{
          if(!match){
             return res.status(404).json({ message: 'Incorrect Password !!' });
          }
-         
-         let secretkey = "";
-         if(user.usertype==="shopkeeper"){
-             secretkey  = process.env.SECREATE_KEY_SHOPKEEPER;
-          }
-         else if(user.usertype==="normaluser"){
-             secretkey  =  process.env.SECREATE_KEY_NORMALUSER;
-         }
+        secretkey  =  process.env.SECREATE_KEY_USER;
           const payload = {
              id : user._id,
              email : user.email,
              usertype :user.usertype
           }
+           const userdata ={
+            id : user._id,
+            email : user.email,
+            usertype :user.usertype
+           }
+
          const token = jwt.sign(payload,secretkey);
-         res.status(200).json({ token: `Bearer ${token}` });
+         res.status(200).json({ token: token , data : userdata});
     } catch (error) {
          console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -157,10 +159,10 @@ const deleteUser = ( asyncHandler(async (req,res)=>{
     if(!user){
         return res.status(404).json({ message: 'User not found' });
     }
-     return  res.status(200).json( "user is deleted ");
+     return  res.status(200).json({message:"user is deleted "});
 }
 catch(error){
-    return res.status(500).json("Internal Server Error !!");
+    return res.status(500).json({message:"Internal Server Error !!"});
 } 
 
 }));
@@ -181,7 +183,6 @@ const updateUser = (asyncHandler(async (req, res) => {
         profileurl: req.body.profileurl,
         usertype: req.body.usertype
     };
-
     try {
         userdata.password = await hashPassword(temppassword);
         const updatedUser = await UserModel.findByIdAndUpdate({ _id: id },userdata, { new: true });
