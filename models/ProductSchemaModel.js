@@ -33,12 +33,13 @@ const productSchema = mongoose.Schema({
             type:String,
             require :[true,"Plese enter your datail "]
          },
-        tagline:{
+        Category:{
             type:String,
-            require :[true,"Plese enter your tagline "]
+            require :[true,"Plese enter your category "]
         },
-        userid:{
-            type:String
+        shopid:{
+            type:String,
+            require :[true,"Plese enter userid"]
         }
 },
 {

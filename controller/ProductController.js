@@ -18,6 +18,23 @@ const getAllProducts = (asyncHandler( async(req,res)=>{
     }
 }));
 
+// @desc  get product by product id 
+// @route /product/getproductbyid/:id
+// @access private
+
+const getProductById =(asyncHandler( async(req,res)=>{
+   const id = req.params.itemId;
+   const product = await ProductModel.find({_id:id});
+   if(product){
+    return res.status(200).json(product);
+   }
+   else{
+    return res.status(500).json("Internal server error !!");
+   }
+
+}));
+
+
 // @desc Saving the product item
 // @route /product/saveproducts
 // @access public
@@ -28,7 +45,8 @@ const saveProducts = (asyncHandler( async(req,res)=>{
             error :'Not A Valid User '
         })
        }
-    const productdata ={
+       const id = req.id;
+       const productdata ={
         url: req.body.url,
         shorttitle: req.body.shorttitle,
         longtitle: req.body.longtitle,
@@ -37,6 +55,7 @@ const saveProducts = (asyncHandler( async(req,res)=>{
         discount: req.body.discount,
         description: req.body.description,
         detail: req.body.detail,
+        shopid:id,
         category: req.body.category
     }
     
@@ -52,7 +71,7 @@ const saveProducts = (asyncHandler( async(req,res)=>{
 
 }));
 
-// @desc Fetching product according to id
+// @desc Fetching product according to shop id
 // @route /product/getproducts/:token
 // @access private
 const getUserProducts = (asyncHandler( async(req,res)=>{
@@ -63,7 +82,7 @@ const getUserProducts = (asyncHandler( async(req,res)=>{
         error :'Not A Valid User '
     })
    }
-   const product = await ProductModel.find({userid : id}).then(  
+   const product = await ProductModel.find({shopid : id}).then(  
     (result)=>{
         if (result.length > 0) {
             return res.status(200).json(result); 
@@ -129,4 +148,4 @@ const updataProducts = (asyncHandler( async(req,res)=>{
 
 }));
 
-module.exports = {getAllProducts,saveProducts,getUserProducts,deleteProducts,updataProducts};
+module.exports = {getAllProducts,saveProducts,getUserProducts,deleteProducts,updataProducts,getProductById};
