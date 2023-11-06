@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config();
-async function SendEmail(email,text){
+async function SendEmail(email,text,subject){
    try {
        const transporter = nodemailer.createTransport({
          service: 'gmail',
@@ -13,7 +13,7 @@ async function SendEmail(email,text){
        const mailOptions = {
          from: process.env.EMAIL,
          to: email,
-         subject: 'Change Password',
+         subject: subject,
          html: text
        };
        const info = await transporter.sendMail(mailOptions);

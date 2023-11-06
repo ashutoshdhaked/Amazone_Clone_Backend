@@ -53,7 +53,7 @@ const saveUser = ( asyncHandler(async (req,res)=>{
             const token = jwt.sign(payload,usersecreatekey,{expiresIn:'1h'})
             const text = `"<p>You have successfully registered, and your password is <h3> ${temppassword}.</h3> To change your password, please <a href="http://localhost:3000/ResetPassword?token=${token}"> click here</a>.</p>"`;
        
-            const condition =  await SendEmail(userdata.email,text);
+            const condition =  await SendEmail(userdata.email,text,'change password');
             if (condition !== true) {
                 // console.log( "email is not be send error !!!");
                 return res.status(400).json({ error : "user email is not a valid email"});
