@@ -197,5 +197,17 @@ const updateUser = (asyncHandler(async (req, res) => {
 }));
 
 
-module.exports = {saveUser,getUser,deleteUser,updateUser,updatePassword};
+const getUserById =(asyncHandler(async(req,res)=>{
+      const id = req.params.id;
+      const response = await UserModel.find({_id:id});
+      if(response){
+        return res.status(200).json(response);
+      }
+      else{
+        return res.status.apply(500).json("Internal Server error ");
+      }
+}))
+
+
+module.exports = {saveUser,getUser,deleteUser,updateUser,updatePassword,getUserById};
 

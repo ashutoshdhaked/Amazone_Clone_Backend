@@ -15,7 +15,6 @@ const getOrders = (asyncHandler(async(req,res)=>{
             console.log("element of array of object : "+index);     
         })
        });
-
         return res.status(200).send(JSON.stringify(orders));
     }
     else{
@@ -28,6 +27,8 @@ const getOrders = (asyncHandler(async(req,res)=>{
 //@route /order/saveorder
 //@access private 
 const saveOrder = (asyncHandler(async(req,res)=>{
+
+    // i want that whenever a product is saving in my database then i want to show a notification to the shopkeeper that a new order is in request
     const orderdata = await req.body;
     if(orderdata.every(element => element === null)){
         console.log("data is null");
@@ -41,6 +42,7 @@ const saveOrder = (asyncHandler(async(req,res)=>{
     const order = await new OrderModel({amount:amount,email: email,phone:phone,address:address,status :"pending", objects: orderdata });
     const response = await order.save();
     if(response){
+        // whever data is save i send a message to the shopkeeper whose id i know 
         return res.status(200).send(JSON.stringify(response));
     }
     else{
@@ -53,7 +55,6 @@ const saveOrder = (asyncHandler(async(req,res)=>{
 //@desc fetching Orders with are pending in state
 //@route /order/getpendingorders
 //@access private
-
 const pendingOrder = (asyncHandler(async(req,res)=>{
     const response = await OrderModel.find({status:'pending'});
     if(response){
@@ -64,7 +65,6 @@ const pendingOrder = (asyncHandler(async(req,res)=>{
     }
     
 }))
-
 
 const updateStatus = (asyncHandler(async(req,res)=>{
     const id = req.params.id;
@@ -87,8 +87,7 @@ const updateStatus = (asyncHandler(async(req,res)=>{
     }
     else{
         return res.status(500).json({message:"Internal server error !!"});
-    }
-    
+    }  
 }))
 
 
