@@ -56,7 +56,8 @@ const saveOrder = (asyncHandler(async(req,res)=>{
 //@route /order/getpendingorders
 //@access private
 const pendingOrder = (asyncHandler(async(req,res)=>{
-    const response = await OrderModel.find({status:'pending'});
+    const shopid = req.params.id;
+    const response = await OrderModel.find({status:'pending','objects.shopid': shopid});
     if(response){
         return res.status(200).send(JSON.stringify(response));
     }
@@ -66,6 +67,28 @@ const pendingOrder = (asyncHandler(async(req,res)=>{
     
 }))
 
+
+//@desc fetching Orders according to userid
+//@route /order/getuserorders
+//@access private
+const getUserOrders = (asyncHandler(async(req,res)=>{
+    const userid = req.params.id;
+    const response = await OrderModel.find({'objects.customerid': userid });
+    if(response){
+        return res.status(200).send(JSON.stringify(response));
+    }
+    else{
+        return res.status(500).json({message:"Internal server error !!"});
+    }
+
+})) 
+
+
+
+
+//@desc updating the userstatus
+//@route /order/updatestatus
+//@access private
 const updateStatus = (asyncHandler(async(req,res)=>{
     const id = req.params.id;
     const currentStatus = req.body.status;
@@ -91,4 +114,4 @@ const updateStatus = (asyncHandler(async(req,res)=>{
 }))
 
 
-module.exports = {getOrders,saveOrder,pendingOrder,updateStatus};
+module.exports = {getOrders,saveOrder,pendingOrder,updateStatus,getUserOrders};

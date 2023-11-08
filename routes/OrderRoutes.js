@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {getOrders,saveOrder,pendingOrder,updateStatus} = require('../controller/OrderController');
+const {getOrders,saveOrder,pendingOrder,updateStatus,getUserOrders} = require('../controller/OrderController');
 router.get('/getorders',getOrders);
 router.post('/saveorder',saveOrder);
-router.get('/getpendingorder',pendingOrder);
+router.get('/getpendingorder/:id',pendingOrder);
 router.post('/updatestatus/:id',updateStatus);
+router.get('/getuserorders/:id',getUserOrders)
 
 module.exports = router;
