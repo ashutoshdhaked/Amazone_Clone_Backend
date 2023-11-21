@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const userSchema =  mongoose.Schema({
+    profile:{
+        type:String
+    },
     name:{
        type:String,
        require :[true,"Plese enter your name "]
@@ -27,7 +30,11 @@ const userSchema =  mongoose.Schema({
     usertype:{
         type:String,
         require :[true,"Plese enter your usertype "]
+    },
+    about:{
+      type:String
     }
+
 },
 
 {

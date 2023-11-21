@@ -6,7 +6,7 @@ require('dotenv').config();
 const  jwt = require('jsonwebtoken');
 const SendEmail = require('../helper/SendEmail');
 const userValidation = require('../Validation/UserValidation'); 
-
+const UploadOnCloudinary = require('../helper/UploadOnCloudinary');
 
 
 
@@ -20,6 +20,7 @@ async function hashPassword(plaintextPassword) {
 //@access public 
 const saveUser = ( asyncHandler(async (req,res)=>{
     const userdata = {
+        profile : req.body.profile,
         name:req.body.name,
         username:req.body.username,
         email:req.body.email,
@@ -175,6 +176,7 @@ catch(error){
 const updateUser = (asyncHandler(async (req, res) => {
     const id = req.params.id;
     const userdata = {
+        profile : req.body.profile,
         name: req.body.name,
         username: req.body.username,
         email: req.body.email,
@@ -197,6 +199,21 @@ const updateUser = (asyncHandler(async (req, res) => {
 }));
 
 
+const updateProfile = (asyncHandler(async(req,res)=>{
+    try{
+  const id = req.params.id;  
+  const profile_url = req.body.profile;
+  const updatedUser = await UserModel.findByIdAndUpdate({ _id: id },{ $set: { profile: profile_url } });
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}))
+
 const getUserById =(asyncHandler(async(req,res)=>{
       const id = req.params.id;
       const response = await UserModel.find({_id:id});
@@ -209,5 +226,28 @@ const getUserById =(asyncHandler(async(req,res)=>{
 }))
 
 
-module.exports = {saveUser,getUser,deleteUser,updateUser,updatePassword,getUserById};
+
+
+const uploadImage = (asyncHandler(async(req,res)=>{
+try{
+    const image = req.file;
+   const url = await UploadOnCloudinary(image);
+   if(url){
+    console.log("Image successfully uploaded, URL is: " + url);
+    return res.status(200).json(url);
+   }
+   else{
+    console.error("Error in uploading the image:", error);
+    return res.status(500).json("Internal Server Error: Error in uploading the image");
+   }
+}
+catch(error){
+    console.error("Error in uploading the image:", error);
+    return res.status(500).json("Internal Server Error: Error in uploading the image");   
+}
+
+}))
+
+
+module.exports = {saveUser,getUser,deleteUser,updateUser,updatePassword,getUserById,uploadImage,updateProfile};
 

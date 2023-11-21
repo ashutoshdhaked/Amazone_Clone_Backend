@@ -3,7 +3,11 @@ const cors = require('cors');
 const env = require('dotenv').config();
 const connectionDB = require('./config/dbConnection');
 const errorHandler = require('./middleware/errorHandler');
+// const multer = require('multer');
+// const upload = multer();
 const app = express();
+
+// app.use(upload.array());
 app.use(cors());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
