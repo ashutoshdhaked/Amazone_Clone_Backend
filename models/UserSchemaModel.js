@@ -24,9 +24,6 @@ const userSchema =  mongoose.Schema({
         type:String,
        require :[true,"Plese enter your password"]
     },
-    profileurl:{
-        type:String
-    },
     usertype:{
         type:String,
         require :[true,"Plese enter your usertype "]

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const productSchema = mongoose.Schema({
-   
         url:{
             type:String,
             require :[true,"Plese enter your url "]

@@ -74,8 +74,23 @@ const pendingOrder = (asyncHandler(async(req,res)=>{
 const getUserOrders = (asyncHandler(async(req,res)=>{
     const userid = req.params.id;
     const response = await OrderModel.find({'objects.customerid': userid });
+       const cancelorders =[];
+       const pendingorders =[];
+       const confirmorders =[];
+       for(let item of response ){
+            if(item.status ==='confirm'){
+                confirmorders.push(item);
+            }
+            else if(item.status==='cancel'){
+                cancelorders.push(item);
+            }
+            else{
+                pendingorders.push(item);
+            }
+       }
+
     if(response){
-        return res.status(200).send(JSON.stringify(response));
+        return res.status(200).send(JSON.stringify({cancel:cancelorders,confirm :confirmorders,pending:pendingorders}));
     }
     else{
         return res.status(500).json({message:"Internal server error !!"});
@@ -114,4 +129,17 @@ const updateStatus = (asyncHandler(async(req,res)=>{
 }))
 
 
-module.exports = {getOrders,saveOrder,pendingOrder,updateStatus,getUserOrders};
+const getCustomerId = (asyncHandler(async(req,res)=>{
+   const id = await OrderModel.distinct('objects.customerid');
+   if(id){
+    return res.status(200).send(JSON.stringify(id));
+   }
+   else{
+    return res.status(500).send({message:"Internal server error !!"});
+   }
+   
+
+}))
+
+
+module.exports = {getOrders,saveOrder,pendingOrder,updateStatus,getUserOrders,getCustomerId};

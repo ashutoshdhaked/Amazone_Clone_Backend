@@ -137,7 +137,9 @@ const getUser = ( asyncHandler(async (req,res)=>{
            const userdata ={
             id : user._id,
             email : user.email,
-            usertype :user.usertype
+            usertype :user.usertype,
+            profile : user.profile,
+            username:user.username
            }
 
          const token = jwt.sign(payload,secretkey);
@@ -181,12 +183,10 @@ const updateUser = (asyncHandler(async (req, res) => {
         username: req.body.username,
         email: req.body.email,
         phone: req.body.phone,
-        password: req.body.password,
-        profileurl: req.body.profileurl,
-        usertype: req.body.usertype
+        usertype: req.body.usertype,
+        about:req.body.about
     };
     try {
-        userdata.password = await hashPassword(temppassword);
         const updatedUser = await UserModel.findByIdAndUpdate({ _id: id },userdata, { new: true });
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
@@ -203,7 +203,7 @@ const updateProfile = (asyncHandler(async(req,res)=>{
     try{
   const id = req.params.id;  
   const profile_url = req.body.profile;
-  const updatedUser = await UserModel.findByIdAndUpdate({ _id: id },{ $set: { profile: profile_url } });
+  const updatedUser = await UserModel.findByIdAndUpdate({ _id: id },{ $set: { profile: profile_url } },{ new: true });
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
