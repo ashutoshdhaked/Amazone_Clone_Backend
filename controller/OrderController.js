@@ -98,9 +98,6 @@ const getUserOrders = (asyncHandler(async(req,res)=>{
 
 })) 
 
-
-
-
 //@desc updating the userstatus
 //@route /order/updatestatus
 //@access private

@@ -87,14 +87,11 @@ const saveUser = ( asyncHandler(async (req,res)=>{
 //@access public
 const updatePassword = ( asyncHandler(async (req,res)=>{
     const token = req.body.token.trim();
-    const key = process.env.SECERATE_KEY.trim(); 
     const password = req.body.password;
-    
-    console.log("token:"+token+"and key:"+key);
-
-    try{
+    const key = process.env.SECERATE_KEY.trim(); 
+    try{ 
         const payload = await jwt.verify(token,key);
-        const email = payload.email;       
+        const email = payload.email;    
         const user= await UserModel.findOne({email :email});
         user.password = await hashPassword(password);
         const response =  new UserModel(user);

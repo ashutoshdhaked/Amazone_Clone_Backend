@@ -6,9 +6,9 @@ const {getAllProducts,saveProducts,getUserProducts,deleteProducts,updataProducts
 
 router.get("/getproducts",getAllProducts);
 router.post("/saveproducts",VerifyToken,CheckUserType,saveProducts);
-router.get("/getproducts/:token",VerifyToken,CheckUserType,getUserProducts);
-router.delete("/deleteproducts/:token",VerifyToken,CheckUserType,deleteProducts);
-router.patch("/updateproducts/:token",VerifyToken,CheckUserType,updataProducts);
+router.get("/getuserproducts",VerifyToken,CheckUserType,getUserProducts);
+router.delete("/deleteproducts",VerifyToken,CheckUserType,deleteProducts);
+router.patch("/updateproducts",VerifyToken,CheckUserType,updataProducts);
 router.get("/getproductbyid/:itemId",VerifyToken,CheckUserType,getProductById);
 
 module.exports = router;
