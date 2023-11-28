@@ -6,6 +6,6 @@ router.post('/saveorder',saveOrder);
 router.get('/getpendingorder/:id',pendingOrder);
 router.post('/updatestatus/:id',updateStatus);
 router.get('/getuserorders/:id',getUserOrders)
-router.get('/getcustomerid',getCustomerId);
+router.get('/getcustomerid/:id',getCustomerId);
 
 module.exports = router;

@@ -1,5 +1,7 @@
 const ProductModel = require('../models/ProductSchemaModel');
 const asyncHandler = require('express-async-handler');
+const uploadImage = require('../helper/UploadOnCloudinary');
+const CategoryModel = require('../models/CategoryModel');
 
 // @desc Fetching all the products
 // @route /product/getproducts
@@ -46,7 +48,7 @@ const saveProducts = (asyncHandler( async(req,res)=>{
         })
        }
        const id = req.id;
-       const productdata ={
+       const productdata = {
         url: req.body.url,
         shorttitle: req.body.shorttitle,
         longtitle: req.body.longtitle,
@@ -148,4 +150,69 @@ const updataProducts = (asyncHandler( async(req,res)=>{
 
 }));
 
-module.exports = {getAllProducts,saveProducts,getUserProducts,deleteProducts,updataProducts,getProductById};
+
+const saveCategory = (asyncHandler(async(req,res)=>{
+    const image = req.file;
+    const pathurl = await uploadImage(image);
+    const data ={
+        shopid :req.body.shopid,
+        name : req.body.name,
+        descryption :req.body.descryption,
+        url :pathurl
+    }
+     const exist = await CategoryModel.find({name:data.name});
+     if(exist.length!==0){
+      return res.status(500).json({message:"Your Category is already exist !!"});
+     }
+    const model = new CategoryModel(data);
+    const response = await model.save();
+    if(response){
+        return res.status(200).json(response);
+    }
+    else{
+        return res.status(500).json({message:"Internal Server Error !!!!"});
+    }
+}))
+
+const getAllCategoryName =  (asyncHandler(async(req,res)=>{
+    const response = await CategoryModel.find().select('name');
+    if(response){
+        return res.status(200).json(response);
+    }
+    else{
+        return res.status(500).json({message:"Internal Server Error !!!!"});
+    }
+}))
+
+const getAllCategory =  (asyncHandler(async(req,res)=>{
+    const response = await CategoryModel.find();
+    if(response){
+        return res.status(200).json(response);
+    }
+    else{
+        return res.status(500).json({message:"Internal Server Error !!!!"});
+    }
+}))
+
+const getProductByCategoryId = (asyncHandler(async (req,res)=>{
+    const categoryId = req.params.id;
+    const response = await ProductModel.find({category:categoryId});
+    if(response){
+        return res.status(200).json(response);
+    }
+    else{
+        return res.status(500).json({message:"Internal Server Error !!!!"});
+    } 
+
+
+
+}))
+
+
+
+
+
+
+
+
+module.exports = {getAllProducts,saveProducts,getUserProducts,deleteProducts,updataProducts,getProductById,saveCategory,getAllCategoryName,getAllCategory, getProductByCategoryId};

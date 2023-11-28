@@ -57,8 +57,17 @@ const saveOrder = (asyncHandler(async(req,res)=>{
 //@access private
 const pendingOrder = (asyncHandler(async(req,res)=>{
     const shopid = req.params.id;
+    // const sendingResponse = [];
     const response = await OrderModel.find({status:'pending','objects.shopid': shopid});
     if(response){
+        // here we have to fiter the orders in which the shopid is like as shopid 
+        // for(let item of response){
+        //     for(let products  of item.objects){
+        //          if(products.shopid===shopid){
+        //             sendingResponse.push(products);
+        //          }
+        //     }
+        // }
         return res.status(200).send(JSON.stringify(response));
     }
     else{
@@ -127,7 +136,9 @@ const updateStatus = (asyncHandler(async(req,res)=>{
 
 
 const getCustomerId = (asyncHandler(async(req,res)=>{
-   const id = await OrderModel.distinct('objects.customerid');
+   const shopid = req.params.id;
+
+   const id = await OrderModel.distinct('objects.customerid',{'objects.shopid': shopid });
    if(id){
     return res.status(200).send(JSON.stringify(id));
    }
