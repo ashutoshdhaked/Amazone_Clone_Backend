@@ -29,7 +29,6 @@ const saveUser = ( asyncHandler(async (req,res)=>{
         profileurl:req.body.profileurl,
         usertype:req.body.usertype
        }
-
        try{
                // using the server side validation to validate that coming data is correct or not
                    const error = userValidation(userdata);
@@ -43,13 +42,12 @@ const saveUser = ( asyncHandler(async (req,res)=>{
                    error : "User is already exist !!"
                })
             }
-
             const temppassword = GeneratePassword(12);
             userdata.password = await hashPassword(temppassword);
             // generating the jwt token for all the user before sending the mail to the user  
             const  usersecreatekey = process.env.SECERATE_KEY; 
             const payload = {
-               email : userdata.email
+               email : userdata.email 
             }
             const token = jwt.sign(payload,usersecreatekey,{expiresIn:'1h'})
             const text = `"<p>You have successfully registered, and your password is <h3> ${temppassword}.</h3> To change your password, please <a href="http://localhost:3000/ResetPassword?token=${token}"> click here</a>.</p>"`;
@@ -98,7 +96,7 @@ const updatePassword = ( asyncHandler(async (req,res)=>{
         const updateduser = response.save();
            if(!updateduser){
              return res.status(500).json("Internal server error");
-           }
+           }        
            res.status(200).json("Your Password is updated ");
        }
     catch(error){
@@ -222,7 +220,29 @@ const getUserById =(asyncHandler(async(req,res)=>{
       }
 }))
 
+const EmailExist = (asyncHandler(async(req,res)=>{
+     const Email = req.body.email;
+     const response = await UserModel.find({email:Email});
+     if(response.length!==0){
+        const data = response[0];
+       const payload = {
+        email : data.email
+     }
+       const  usersecreatekey = process.env.SECERATE_KEY; 
+       const token = jwt.sign(payload,usersecreatekey,{expiresIn:'1h'})
+       const text = `"<h4>Hii ${data.name}</h4><br><p> You can Change Your password please click here to change your password <a href="http://localhost:3000/ResetPassword?token=${token}"> click here</a>.</p>"`;
 
+
+       const condition =  await SendEmail(data.email,text,'Forgot password');
+       if (condition !== true) {
+        return res.status(400).json("Error in Sending the mail !!");
+         } 
+        return res.status(200).json("ok");
+     }
+     else{
+        return res.status(500).json("not_ok");
+     }
+}))
 
 
 const uploadImage = (asyncHandler(async(req,res)=>{
@@ -246,5 +266,5 @@ catch(error){
 }))
 
 
-module.exports = {saveUser,getUser,deleteUser,updateUser,updatePassword,getUserById,uploadImage,updateProfile};
+module.exports = {saveUser,getUser,deleteUser,updateUser,updatePassword,getUserById,uploadImage,updateProfile,EmailExist};
 

@@ -33,7 +33,6 @@ const getProductById =(asyncHandler( async(req,res)=>{
    else{
     return res.status(500).json("Internal server error !!");
    }
-
 }));
 
 
@@ -122,11 +121,10 @@ const deleteProducts = (asyncHandler( async(req,res)=>{
 // @desc  updating products
 // @route /product/updateproducts/:token
 // @access private
-const updataProducts = (asyncHandler( async(req,res)=>{
-    const id = req.id;
+const updataProduct = (asyncHandler( async(req,res)=>{
+    const id = req.params.id;
     const productdata = {
         url: req.body.url,
-        detailUrl: req.body.detailUrl,
         shorttitle: req.body.shorttitle,
         longtitle: req.body.longtitle,
         mrp: req.body.mrp, 
@@ -134,11 +132,10 @@ const updataProducts = (asyncHandler( async(req,res)=>{
         discount: req.body.discount,
         description: req.body.description,
         detail: req.body.detail,
-        tagline: req.body.tagline
+        category :req.body.category,
     }
-     
    try{
-    const result = await ProductModel.updateOne({_id : id},{$set :productdata});
+    const result = await ProductModel.updateOne({_id : id},{$set :productdata},{new :true});
      if(!result){
         return res.status(500).json("Internal Server Error !!");
      } 
@@ -203,16 +200,6 @@ const getProductByCategoryId = (asyncHandler(async (req,res)=>{
     else{
         return res.status(500).json({message:"Internal Server Error !!!!"});
     } 
-
-
-
 }))
 
-
-
-
-
-
-
-
-module.exports = {getAllProducts,saveProducts,getUserProducts,deleteProducts,updataProducts,getProductById,saveCategory,getAllCategoryName,getAllCategory, getProductByCategoryId};
+module.exports = {getAllProducts,saveProducts,getUserProducts,deleteProducts,updataProduct,getProductById,saveCategory,getAllCategoryName,getAllCategory, getProductByCategoryId};
