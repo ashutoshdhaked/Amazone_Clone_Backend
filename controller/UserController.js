@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const UserModel = require('../models/UserSchemaModel');
 const  GeneratePassword = require('../helper/GeneratePassword');
 const bcrypt = require("bcrypt")
-require('dotenv').config();
+require('dotenv').config(); 
 const  jwt = require('jsonwebtoken');
 const SendEmail = require('../helper/SendEmail');
 const userValidation = require('../Validation/UserValidation'); 
@@ -50,8 +50,7 @@ const saveUser = ( asyncHandler(async (req,res)=>{
                email : userdata.email 
             }
             const token = jwt.sign(payload,usersecreatekey,{expiresIn:'1h'})
-            const text = `"<p>You have successfully registered, and your password is <h3> ${temppassword}.</h3> To change your password, please <a href="http://localhost:3000/ResetPassword?token=${token}"> click here</a>.</p>"`;
-       
+            const text = `"<p>You have successfully registered, and your password is <h3> ${temppassword}.</h3> To change your password, please <a href="${process.env.Base_Url}/ResetPassword?token=${token}"> click here</a>.</p>"`;
             const condition =  await SendEmail(userdata.email,text,'change password');
             if (condition !== true) {
                 // console.log( "email is not be send error !!!");
@@ -230,7 +229,7 @@ const EmailExist = (asyncHandler(async(req,res)=>{
      }
        const  usersecreatekey = process.env.SECERATE_KEY; 
        const token = jwt.sign(payload,usersecreatekey,{expiresIn:'1h'})
-       const text = `"<h4>Hii ${data.name}</h4><br><p> You can Change Your password please click here to change your password <a href="http://localhost:3000/ResetPassword?token=${token}"> click here</a>.</p>"`;
+       const text = `"<h4>Hii ${data.name}</h4><br><p> You can Change Your password please click here to change your password <a href="${process.env.Base_Url}/ResetPassword?token=${token}"> click here</a>.</p>"`;
 
 
        const condition =  await SendEmail(data.email,text,'Forgot password');
